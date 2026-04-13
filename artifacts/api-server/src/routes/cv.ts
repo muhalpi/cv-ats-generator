@@ -208,9 +208,10 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   const skills = (cv.skills as string[]).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('');
   const languages = (cv.languages as string[]).map(l => `<span class="tag">${escapeHtml(l)}</span>`).join('');
 
+  const stripUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '');
   const linksHtml = [
-    cv.linkedinUrl ? `<a href="${escapeHtml(cv.linkedinUrl)}" class="contact-link">${escapeHtml(cv.linkedinUrl)}</a>` : '',
-    cv.portfolioUrl ? `<a href="${escapeHtml(cv.portfolioUrl)}" class="contact-link">${escapeHtml(cv.portfolioUrl)}</a>` : '',
+    cv.linkedinUrl ? `<a href="${escapeHtml(cv.linkedinUrl)}" class="contact-link">${escapeHtml(stripUrl(cv.linkedinUrl))}</a>` : '',
+    cv.portfolioUrl ? `<a href="${escapeHtml(cv.portfolioUrl)}" class="contact-link">${escapeHtml(stripUrl(cv.portfolioUrl))}</a>` : '',
   ].filter(Boolean).join(' · ');
 
   return `<!DOCTYPE html>
@@ -227,8 +228,8 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   .name { font-size: 24pt; font-weight: 700; color: #1e40af; letter-spacing: -0.5px; }
   .job-title { font-size: 13pt; color: #3b82f6; font-weight: 500; margin-top: 2px; }
   .contact { margin-top: 8px; font-size: 9.5pt; color: #475569; display: flex; flex-wrap: wrap; gap: 8px 16px; }
-  .contact a { color: #1a1a2e; text-decoration: none; }
-  .contact-link { color: #1a1a2e !important; }
+  .contact a { color: #475569; text-decoration: none; }
+  .contact-link { color: #475569 !important; }
   section { margin-bottom: 20px; }
   h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 1px; color: #1e40af; border-bottom: 1px solid #bfdbfe; padding-bottom: 4px; margin-bottom: 12px; font-weight: 700; }
   .summary { color: #374151; font-size: 10.5pt; line-height: 1.6; }
@@ -245,8 +246,8 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   @media print {
     body { font-size: 10pt; }
     .page { padding: 20px 32px; }
-    a { color: #1a1a2e !important; }
-    .contact-link { color: #1a1a2e !important; }
+    a { color: #475569 !important; }
+    .contact-link { color: #475569 !important; }
   }
 </style>
 </head>
