@@ -101,9 +101,8 @@ export default function CVDetail() {
 
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          @page { margin: 0; size: auto; }
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }
-          .cv-preview-container { min-height: 100vh; padding: 20mm; }
+          .cv-preview-container { padding: 0 !important; }
         }
       `}} />
     </div>

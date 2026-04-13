@@ -243,11 +243,16 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   .entry-desc li { margin-bottom: 4px; display: list-item; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 8px; font-size: 9.5pt; color: #1e40af; }
+  @page {
+    size: A4;
+    margin: 18mm 15mm;
+  }
   @media print {
-    body { font-size: 10pt; }
-    .page { padding: 20px 32px; }
+    body { font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { max-width: 100%; padding: 0; margin: 0; }
     a { color: #475569 !important; }
     .contact-link { color: #475569 !important; }
+    .tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
