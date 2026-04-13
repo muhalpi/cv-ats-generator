@@ -732,7 +732,19 @@ export default function CVForm() {
                                   <p className="text-sm text-muted-foreground">
                                     {item?.startDate || "-"} {item?.endDate ? ` - ${item.endDate}` : item?.isCurrent ? " - Present" : ""}
                                   </p>
-                                  <p className="mt-2 text-sm whitespace-pre-wrap">{item?.description || "-"}</p>
+                                  <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
+                                    {(item?.description || "")
+                                      .split(/\n+/)
+                                      .map((line) => line.trim())
+                                      .filter(Boolean)
+                                      .map((line, bulletIndex) => (
+                                        <li key={bulletIndex} className="flex gap-2">
+                                          <span className="shrink-0">•</span>
+                                          <span className="min-w-0 whitespace-pre-wrap break-words">{line}</span>
+                                        </li>
+                                      ))}
+                                    {!item?.description ? <li>-</li> : null}
+                                  </ul>
                                 </div>
                               );
                             })
