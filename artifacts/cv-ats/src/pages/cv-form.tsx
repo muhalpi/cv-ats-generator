@@ -784,12 +784,26 @@ export default function CVForm() {
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : activeStep === STEPS.length - 2 ? (
-                  <Button type="button" onClick={nextStep} disabled={isSubmitting}>
+                  <Button
+                    type="button"
+                    onClick={async () => {
+                      const isValid = await validateStep(activeStep);
+                      if (isValid) {
+                        setActiveStep(STEPS.length - 1);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    }}
+                    disabled={isSubmitting}
+                  >
                     Review
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button type="submit" disabled={isSubmitting}>
+                  <Button
+                    type="button"
+                    onClick={form.handleSubmit(onSubmit)}
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
