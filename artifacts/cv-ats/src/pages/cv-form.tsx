@@ -169,9 +169,13 @@ export default function CVForm() {
 
   const nextStep = async () => {
     const isValid = await validateStep(activeStep);
-    if (isValid) {
+    if (!isValid) {
+      return;
+    }
+
+    if (activeStep < STEPS.length - 1) {
       setActiveStep((prev) => Math.min(prev + 1, STEPS.length - 1));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
