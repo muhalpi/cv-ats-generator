@@ -181,7 +181,7 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
           <div class="entry-date">${escapeHtml(exp.startDate)} – ${exp.isCurrent ? 'Sekarang' : escapeHtml(exp.endDate ?? '')}</div>
         </div>
         <ul class="entry-desc">
-          ${escapeHtml(exp.description)
+          ${exp.description
             .split(/\n+/)
             .map((line) => line.trim())
             .filter(Boolean)
@@ -198,11 +198,9 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
           <div>
             <div class="entry-title">${escapeHtml(edu.degree)} – ${escapeHtml(edu.field)}</div>
             <div class="entry-subtitle">${escapeHtml(edu.institution)}</div>
-          </div>
-          <div class="entry-date">
-            <div>${escapeHtml(edu.startDate)} – ${edu.isCurrent ? 'Sekarang' : escapeHtml(edu.endDate ?? '')}</div>
             ${edu.gpa ? `<div class="entry-gpa">IPK: ${escapeHtml(edu.gpa)}</div>` : ''}
           </div>
+          <div class="entry-date">${escapeHtml(edu.startDate)} – ${edu.isCurrent ? 'Sekarang' : escapeHtml(edu.endDate ?? '')}</div>
         </div>
       </div>
     `).join('');
@@ -211,8 +209,8 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   const languages = (cv.languages as string[]).map(l => `<span class="tag">${escapeHtml(l)}</span>`).join('');
 
   const linksHtml = [
-    cv.linkedinUrl ? `<a href="${escapeHtml(cv.linkedinUrl)}">LinkedIn</a>` : '',
-    cv.portfolioUrl ? `<a href="${escapeHtml(cv.portfolioUrl)}">Portfolio</a>` : '',
+    cv.linkedinUrl ? `<a href="${escapeHtml(cv.linkedinUrl)}" class="contact-link">${escapeHtml(cv.linkedinUrl)}</a>` : '',
+    cv.portfolioUrl ? `<a href="${escapeHtml(cv.portfolioUrl)}" class="contact-link">${escapeHtml(cv.portfolioUrl)}</a>` : '',
   ].filter(Boolean).join(' · ');
 
   return `<!DOCTYPE html>
@@ -229,7 +227,8 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   .name { font-size: 24pt; font-weight: 700; color: #1e40af; letter-spacing: -0.5px; }
   .job-title { font-size: 13pt; color: #3b82f6; font-weight: 500; margin-top: 2px; }
   .contact { margin-top: 8px; font-size: 9.5pt; color: #475569; display: flex; flex-wrap: wrap; gap: 8px 16px; }
-  .contact a { color: #1e40af; text-decoration: none; }
+  .contact a { color: #1a1a2e; text-decoration: none; }
+  .contact-link { color: #1a1a2e !important; }
   section { margin-bottom: 20px; }
   h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 1px; color: #1e40af; border-bottom: 1px solid #bfdbfe; padding-bottom: 4px; margin-bottom: 12px; font-weight: 700; }
   .summary { color: #374151; font-size: 10.5pt; line-height: 1.6; }
@@ -239,14 +238,15 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
   .entry-subtitle { color: #475569; font-size: 10pt; }
   .entry-date { font-size: 9.5pt; color: #6b7280; white-space: nowrap; margin-left: 8px; }
   .entry-gpa { margin-top: 2px; font-size: 9.5pt; color: #6b7280; }
-  .entry-desc { margin: 6px 0 0 18px; font-size: 10pt; color: #374151; line-height: 1.5; }
-  .entry-desc li { margin-bottom: 4px; }
+  .entry-desc { margin: 6px 0 0 0; padding-left: 18px; font-size: 10pt; color: #374151; line-height: 1.5; list-style-type: disc; }
+  .entry-desc li { margin-bottom: 4px; display: list-item; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 8px; font-size: 9.5pt; color: #1e40af; }
   @media print {
     body { font-size: 10pt; }
     .page { padding: 20px 32px; }
-    a { color: #1e40af !important; }
+    a { color: #1a1a2e !important; }
+    .contact-link { color: #1a1a2e !important; }
   }
 </style>
 </head>
