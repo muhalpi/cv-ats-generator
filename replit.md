@@ -37,10 +37,25 @@ pnpm workspace monorepo using TypeScript. This is a **CV ATS Generator** web app
 
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
+- `pnpm run build:vercel` — build frontend for Vercel deployment
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 - `pnpm --filter @workspace/cv-ats run dev` — run frontend locally
+
+## Vercel Deployment
+
+The project is configured for Vercel with full frontend + serverless API:
+
+- **Frontend**: React/Vite static build → `artifacts/cv-ats/dist/`
+- **Serverless API**: `api/index.ts` wraps the Express app, routed via `/api/*`
+- **SPA routing**: All non-API routes rewrite to `index.html`
+- **Config**: `vercel.json` at root
+- **Build command (Vercel)**: `pnpm build:vercel`
+- **Output directory (Vercel)**: `artifacts/cv-ats/dist`
+
+### Environment Variables (required on Vercel)
+- `DATABASE_URL` — PostgreSQL connection string (e.g. from Neon, Supabase, etc.)
 
 ## Routes
 
