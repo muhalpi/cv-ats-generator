@@ -6,7 +6,7 @@ import { build as esbuild } from "esbuild";
 globalThis.require = createRequire(import.meta.url);
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const entryPoint = path.resolve(root, "artifacts/api-server/src/app.ts");
+const entryPoint = path.resolve(root, "artifacts/api-server/src/app-serverless.ts");
 const outFile = path.resolve(root, "api/index.js");
 
 console.log("Building serverless API bundle...");
@@ -20,21 +20,12 @@ await esbuild({
   logLevel: "info",
   external: [
     "*.node",
-    "pino",
-    "pino-http",
-    "pino-pretty",
-    "thread-stream",
-    "pg",
     "pg-native",
     "sharp",
-    "better-sqlite3",
-    "sqlite3",
     "canvas",
     "bcrypt",
     "argon2",
     "fsevents",
-    "oracledb",
-    "mongodb-client-encryption",
   ],
   sourcemap: false,
   banner: {
