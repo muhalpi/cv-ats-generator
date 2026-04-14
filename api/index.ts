@@ -1,3 +1,4 @@
-import app from "../artifacts/api-server/src/app-serverless";
+// CommonJS-compatible export for Vercel Node runtime
+const app = require("../artifacts/api-server/src/app-serverless").default;
 
-export default app;
+module.exports = app;
