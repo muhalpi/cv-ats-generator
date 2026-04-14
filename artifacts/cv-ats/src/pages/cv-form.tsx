@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
 import { useForm, useFieldArray, type Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -380,10 +380,24 @@ export default function CVForm() {
   const previewDocument = useMemo(
     () => previewHtml.replace(
       "</style>",
-      "html, body { overflow: hidden !important; scrollbar-width: none; } body::-webkit-scrollbar { display: none; }</style>",
+      `html, body { scrollbar-width: none; }
+       html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+       .page { min-height: 0 !important; }</style>`,
     ),
     [previewHtml],
   );
+
+  const IFRAME_SCALE = 0.693;
+  const IFRAME_WIDTH = 820;
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeHeight, setIframeHeight] = useState(1120);
+
+  const handleIframeLoad = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (!iframe || !iframe.contentDocument) return;
+    const h = iframe.contentDocument.documentElement.scrollHeight;
+    if (h > 0) setIframeHeight(h);
+  }, []);
 
   if (isEditing && isLoadingInitial) {
     return (
@@ -1187,18 +1201,23 @@ export default function CVForm() {
               </div>
               <div className="max-h-[calc(100vh-150px)] overflow-y-auto overflow-x-hidden bg-slate-100 p-4 overscroll-contain">
                 <div
-                  className="mx-auto bg-white shadow-sm"
-                  style={{ width: '568px', minHeight: '1120px' }}
+                  className="mx-auto overflow-hidden"
+                  style={{
+                    width: `${Math.round(IFRAME_WIDTH * IFRAME_SCALE)}px`,
+                    height: `${Math.round(iframeHeight * IFRAME_SCALE)}px`,
+                  }}
                 >
                   <iframe
+                    ref={iframeRef}
                     srcDoc={previewDocument}
                     title="CV Preview"
+                    onLoad={handleIframeLoad}
                     scrolling="no"
                     style={{
-                      width: '820px',
-                      height: '1616px',
+                      width: `${IFRAME_WIDTH}px`,
+                      height: `${iframeHeight}px`,
                       border: 'none',
-                      transform: 'scale(0.693)',
+                      transform: `scale(${IFRAME_SCALE})`,
                       transformOrigin: 'top left',
                       pointerEvents: 'none',
                       display: 'block',
