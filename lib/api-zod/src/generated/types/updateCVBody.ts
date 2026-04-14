@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { Education } from "./education";
+import type { ExtraSection } from "./extraSection";
 import type { WorkExperience } from "./workExperience";
 
 export interface UpdateCVBody {
@@ -21,6 +22,7 @@ export interface UpdateCVBody {
   languages?: string[];
   workExperience?: WorkExperience[];
   education?: Education[];
+  extraSections?: ExtraSection[] | null;
   /** @nullable */
   linkedinUrl?: string | null;
   /** @nullable */

@@ -50,6 +50,7 @@ router.post("/cv", async (req, res): Promise<void> => {
     languages: data.languages,
     workExperience: data.workExperience ?? [],
     education: data.education ?? [],
+    extraSections: data.extraSections ?? [],
     linkedinUrl: data.linkedinUrl ?? null,
     portfolioUrl: data.portfolioUrl ?? null,
   }).returning();
@@ -103,6 +104,7 @@ router.patch("/cv/:id", async (req, res): Promise<void> => {
   if (data.languages !== undefined) updateData.languages = data.languages;
   if (data.workExperience !== undefined) updateData.workExperience = data.workExperience;
   if (data.education !== undefined) updateData.education = data.education;
+  if (data.extraSections !== undefined) updateData.extraSections = data.extraSections ?? [];
   if (data.linkedinUrl !== undefined) updateData.linkedinUrl = data.linkedinUrl;
   if (data.portfolioUrl !== undefined) updateData.portfolioUrl = data.portfolioUrl;
 
@@ -170,6 +172,29 @@ function serializeCV(cv: typeof cvsTable.$inferSelect) {
 }
 
 function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
+  const extraSectionsHtml = (cv.extraSections as { sectionTitle: string; entries: { title: string; subtitle?: string | null; date?: string | null; description?: string | null }[] }[] | null ?? [])
+    .filter(sec => sec.entries.length > 0)
+    .map(sec => `
+      <section>
+        <h2>${escapeHtml(sec.sectionTitle)}</h2>
+        ${sec.entries.map(entry => `
+          <div class="entry">
+            <div class="entry-header">
+              <div>
+                <div class="entry-title">${escapeHtml(entry.title)}</div>
+                ${entry.subtitle ? `<div class="entry-subtitle">${escapeHtml(entry.subtitle)}</div>` : ''}
+              </div>
+              ${entry.date ? `<div class="entry-date">${escapeHtml(entry.date)}</div>` : ''}
+            </div>
+            ${entry.description ? `
+            <ul class="entry-desc">
+              ${entry.description.split(/\n+/).map(l => l.trim()).filter(Boolean).map(l => `<li>${escapeHtml(l)}</li>`).join('')}
+            </ul>` : ''}
+          </div>
+        `).join('')}
+      </section>
+    `).join('');
+
   const workExpHtml = (cv.workExperience as { company: string; position: string; startDate: string; endDate?: string | null; isCurrent: boolean; description: string }[])
     .map(exp => `
       <div class="entry">
@@ -289,6 +314,8 @@ function generateCVHtml(cv: typeof cvsTable.$inferSelect): string {
     ${educationHtml}
   </section>
   ` : ''}
+
+  ${extraSectionsHtml}
 
   ${(cv.skills as string[]).length > 0 ? `
   <section>

@@ -34,6 +34,18 @@ const educationSchema = z.object({
   gpa: z.string().optional().nullable(),
 });
 
+const extraSectionEntrySchema = z.object({
+  title: z.string().min(1, "Judul wajib diisi"),
+  subtitle: z.string().optional().nullable(),
+  date: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+});
+
+const extraSectionSchema = z.object({
+  sectionTitle: z.string().min(1, "Nama seksi wajib diisi"),
+  entries: z.array(extraSectionEntrySchema),
+});
+
 const formSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -53,6 +65,7 @@ const formSchema = z.object({
   }, "URL tidak valid"),
   workExperience: z.array(workExperienceSchema),
   education: z.array(educationSchema),
+  extraSections: z.array(extraSectionSchema),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -62,7 +75,18 @@ const STEPS = [
   { id: "summary", title: "Summary & Skills" },
   { id: "experience", title: "Work Experience" },
   { id: "education", title: "Education" },
+  { id: "extra", title: "Seksi Tambahan" },
   { id: "review", title: "Review" },
+];
+
+const PRESET_SECTIONS = [
+  "Penghargaan",
+  "Pengalaman Organisasi",
+  "Pelatihan & Sertifikasi",
+  "Proyek",
+  "Publikasi",
+  "Kegiatan Sukarela",
+  "Kursus Online",
 ];
 
 export default function CVForm() {
@@ -100,6 +124,7 @@ export default function CVForm() {
       portfolioUrl: "",
       workExperience: [],
       education: [],
+      extraSections: [],
     },
   });
 
@@ -111,6 +136,11 @@ export default function CVForm() {
   const { fields: eduFields, append: appendEdu, remove: removeEdu } = useFieldArray({
     control: form.control,
     name: "education",
+  });
+
+  const { fields: sectionFields, append: appendSection, remove: removeSection } = useFieldArray({
+    control: form.control,
+    name: "extraSections",
   });
 
   useEffect(() => {
@@ -128,6 +158,7 @@ export default function CVForm() {
         portfolioUrl: initialData.portfolioUrl || "",
         workExperience: initialData.workExperience || [],
         education: initialData.education || [],
+        extraSections: (initialData.extraSections as { sectionTitle: string; entries: { title: string; subtitle?: string | null; date?: string | null; description?: string | null }[] }[]) || [],
       });
     }
   }, [initialData, form]);
@@ -176,6 +207,8 @@ export default function CVForm() {
       fieldsToValidate = ["workExperience"];
     } else if (stepIndex === 3) {
       fieldsToValidate = ["education"];
+    } else if (stepIndex === 4) {
+      fieldsToValidate = ["extraSections"];
     }
 
     const isValid = await form.trigger(fieldsToValidate);
@@ -286,7 +319,8 @@ export default function CVForm() {
                   {activeStep === 1 && "A brief summary of your background and key skills."}
                   {activeStep === 2 && "Your relevant work history."}
                   {activeStep === 3 && "Your academic background."}
-                  {activeStep === 4 && "Review everything before saving your CV."}
+                  {activeStep === 4 && "Tambahkan seksi opsional seperti penghargaan, sertifikasi, organisasi, dll."}
+                  {activeStep === 5 && "Review everything before saving your CV."}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
@@ -705,7 +739,54 @@ export default function CVForm() {
                   </Button>
                 </div>
 
+                {/* ─── Step 4: Extra Sections ─── */}
                 <div className={activeStep === 4 ? "space-y-6" : "hidden"}>
+                  <div>
+                    <p className="text-sm font-medium mb-3 text-muted-foreground">Pilih seksi yang ingin ditambahkan:</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {PRESET_SECTIONS.map((preset) => (
+                        <Button
+                          key={preset}
+                          type="button"
+                          variant="outline"
+                          className="justify-start h-auto py-2 text-sm"
+                          onClick={() => appendSection({ sectionTitle: preset, entries: [{ title: "", subtitle: "", date: "", description: "" }] })}
+                        >
+                          <Plus className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+                          {preset}
+                        </Button>
+                      ))}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="justify-start h-auto py-2 text-sm border-dashed"
+                        onClick={() => appendSection({ sectionTitle: "", entries: [{ title: "", subtitle: "", date: "", description: "" }] })}
+                      >
+                        <Plus className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+                        Seksi Kustom
+                      </Button>
+                    </div>
+                  </div>
+
+                  {sectionFields.length === 0 && (
+                    <div className="text-center py-10 text-muted-foreground border-2 border-dashed rounded-lg">
+                      <p className="text-sm">Klik salah satu pilihan di atas untuk menambahkan seksi tambahan.</p>
+                      <p className="text-xs mt-1">Seksi ini opsional — lewati jika tidak diperlukan.</p>
+                    </div>
+                  )}
+
+                  {sectionFields.map((sectionField, sectionIndex) => (
+                    <ExtraSectionItem
+                      key={sectionField.id}
+                      sectionIndex={sectionIndex}
+                      control={form.control}
+                      onRemove={() => removeSection(sectionIndex)}
+                    />
+                  ))}
+                </div>
+
+                {/* ─── Step 5: Review ─── */}
+                <div className={activeStep === 5 ? "space-y-6" : "hidden"}>
                   <Card className="border-border/50 shadow-sm">
                     <CardContent className="pt-6 space-y-6">
                       <div className="grid gap-4 md:grid-cols-2">

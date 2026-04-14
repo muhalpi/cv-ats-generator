@@ -14,6 +14,7 @@ export const cvsTable = pgTable("cvs", {
   languages: jsonb("languages").notNull().default([]).$type<string[]>(),
   workExperience: jsonb("work_experience").notNull().default([]).$type<WorkExperienceEntry[]>(),
   education: jsonb("education").notNull().default([]).$type<EducationEntry[]>(),
+  extraSections: jsonb("extra_sections").notNull().default([]).$type<ExtraSection[]>(),
   linkedinUrl: text("linkedin_url"),
   portfolioUrl: text("portfolio_url"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -37,6 +38,18 @@ export type EducationEntry = {
   endDate?: string | null;
   isCurrent: boolean;
   gpa?: string | null;
+};
+
+export type ExtraSectionEntry = {
+  title: string;
+  subtitle?: string | null;
+  date?: string | null;
+  description?: string | null;
+};
+
+export type ExtraSection = {
+  sectionTitle: string;
+  entries: ExtraSectionEntry[];
 };
 
 export const insertCvSchema = createInsertSchema(cvsTable).omit({ id: true, createdAt: true, updatedAt: true });

@@ -12,6 +12,7 @@ export * from "./cVHtml";
 export * from "./cVSummary";
 export * from "./education";
 export * from "./errorResponse";
+export * from "./extraSection";
 export * from "./healthStatus";
 export * from "./updateCVBody";
 export * from "./workExperience";
