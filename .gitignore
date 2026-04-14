@@ -5,6 +5,9 @@ dist
 tmp
 out-tsc
 *.tsbuildinfo
+
+# Generated serverless bundle (built during deploy)
+api/index.js
 .expo
 .expo-shared
 
