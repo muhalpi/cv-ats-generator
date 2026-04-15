@@ -29,11 +29,11 @@ async function buildAll() {
     entryPoints: [path.resolve(artifactDir, "src/app-serverless.ts")],
     platform: "node",
     bundle: true,
-    format: "esm",
-    outfile: path.resolve(distDir, "app-serverless.mjs"),
+    format: "cjs",
+    outfile: path.resolve(distDir, "app-serverless.cjs"),
     logLevel: "info",
     sourcemap: "linked",
-  });
+});
 }
 
 buildAll().catch((err) => {
