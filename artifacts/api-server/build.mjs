@@ -120,6 +120,17 @@ globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
   });
 }
 
+  await esbuild({
+    entryPoints: [path.resolve(artifactDir, "src/app-serverless.ts")],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: path.resolve(distDir, "app-serverless.mjs"),
+    logLevel: "info",
+    sourcemap: "linked",
+    external: ["*.node"],
+  });
+
 buildAll().catch((err) => {
   console.error(err);
   process.exit(1);
